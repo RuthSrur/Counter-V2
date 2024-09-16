@@ -10,10 +10,18 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Login to DockerHub
-                    withDockerRegistry([credentialsId: 'dockerhub-credentials-id', url: 'https://index.docker.io/v1/']) {
-                        // Build the Docker image
-                        docker.build("${DOCKERHUB_REPO}:${DOCKER_TAG}")
+                    try {
+                        // Print Docker version for debugging
+                        sh 'docker --version'
+                        
+                        // Login to DockerHub
+                        withDockerRegistry([credentialsId: 'dockerhub-credentials-id', url: 'https://index.docker.io/v1/']) {
+                            // Build the Docker image
+                            docker.build("${DOCKERHUB_REPO}:${DOCKER_TAG}")
+                        }
+                    } catch (Exception e) {
+                        echo "Error during Docker build: ${e.getMessage()}"
+                        throw e
                     }
                 }
             }
@@ -21,10 +29,14 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    // Login to DockerHub and push the image
-                    withDockerRegistry([credentialsId: 'dockerhub-credentials-id', url: 'https://index.docker.io/v1/']) {
-                        // Push the Docker image
-                        docker.image("${DOCKERHUB_REPO}:${DOCKER_TAG}").push()
+                    try {
+                        // Login to DockerHub and push the image
+                        withDockerRegistry([credentialsId: 'dockerhub-credentials-id', url: 'https://index.docker.io/v1/']) {
+                            docker.image("${DOCKERHUB_REPO}:${DOCKER_TAG}").push()
+                        }
+                    } catch (Exception e) {
+                        echo "Error during Docker push: ${e.getMessage()}"
+                        throw e
                     }
                 }
             }
