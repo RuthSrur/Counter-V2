@@ -11,7 +11,7 @@ RUN apt-get update && \
     apt-get clean
 
 # Copy app and requirements
-COPY main.py requirements.txt test_main.py ./
+COPY main.py requirements.txt ./ 
 COPY static/ static/
 COPY templates/ templates/
 
