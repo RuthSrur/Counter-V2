@@ -14,11 +14,9 @@ pipeline {
                         // Print Docker version for debugging
                         sh 'docker --version'
                         
-                        // Login to DockerHub
-                        withDockerRegistry([credentialsId: 'dockerhub-credentials-id', url: 'https://index.docker.io/v1/']) {
-                            // Build the Docker image
-                            docker.build("${DOCKERHUB_REPO}:${DOCKER_TAG}")
-                        }
+                        // Build the Docker image
+                        echo "Building Docker image ${DOCKERHUB_REPO}:${DOCKER_TAG}"
+                        docker.build("${DOCKERHUB_REPO}:${DOCKER_TAG}")
                     } catch (Exception e) {
                         echo "Error during Docker build: ${e.getMessage()}"
                         throw e
@@ -31,6 +29,7 @@ pipeline {
                 script {
                     try {
                         // Login to DockerHub and push the image
+                        echo "Pushing Docker image ${DOCKERHUB_REPO}:${DOCKER_TAG}"
                         withDockerRegistry([credentialsId: 'dockerhub-credentials-id', url: 'https://index.docker.io/v1/']) {
                             docker.image("${DOCKERHUB_REPO}:${DOCKER_TAG}").push()
                         }
