@@ -1,0 +1,9 @@
+click==8.1.7
+Flask==2.1.1
+git-filter-repo==2.45.0
+itsdangerous==2.2.0
+Jinja2==3.1.4
+MarkupSafe==2.1.5
+prometheus-client==0.16.0
+prometheus_flask_exporter==0.23.1
+Werkzeug==2.0.3

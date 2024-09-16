@@ -1,0 +1,8 @@
+counter_venv 
+__pycache__
+.terraform
+.terraform*
+.terraform
+terraform.tfstate*
+terraform.tfstate.backup*
+inventory.ini
