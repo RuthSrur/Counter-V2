@@ -1,6 +1,9 @@
 {{/*
-Generate a default fully-qualified app name.
+Generate labels for the application.
 */}}
-{{- define "counter-helm.fullname" -}}
-{{- printf "%s-%s" .Release.Name .Chart.Name | trunc 63 | trimSuffix "-" -}}
+{{- define "counter-helm.labels" -}}
+app: {{ include "counter-helm.fullname" . }}
+chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+release: {{ .Release.Name }}
+heritage: {{ .Release.Service }}
 {{- end -}}
