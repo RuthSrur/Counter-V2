@@ -5,3 +5,17 @@ app:
 image:
   repository: ruthsrur/flask-counter-app
   tag: latest
+
+
+service:
+  type: ClusterIP
+  port: 8081
+
+ingress:
+  enabled: false  
+  annotations: {}
+  hosts:
+    - host: ""
+      paths:
+        - /
+  tls: []
