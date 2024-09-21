@@ -10,10 +10,15 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Login to DockerHub
+                    echo "Starting to build the Docker image ${DOCKERHUB_REPO}:${DOCKER_TAG}..."
                     withDockerRegistry([credentialsId: 'dockerhub-credentials-id', url: 'https://index.docker.io/v1/']) {
-                        // Build the Docker image
-                        docker.build("${DOCKERHUB_REPO}:${DOCKER_TAG}")
+                        try {
+                            docker.build("${DOCKERHUB_REPO}:${DOCKER_TAG}")
+                            echo "Docker image ${DOCKERHUB_REPO}:${DOCKER_TAG} built successfully."
+                        } catch (Exception e) {
+                            echo "Error occurred while building Docker image: ${e.message}"
+                            throw e
+                        }
                     }
                 }
             }
@@ -21,10 +26,15 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    // Login to DockerHub and push the image
+                    echo "Pushing Docker image to DockerHub..."
                     withDockerRegistry([credentialsId: 'dockerhub-credentials-id', url: 'https://index.docker.io/v1/']) {
-                        // Push the Docker image
-                        docker.image("${DOCKERHUB_REPO}:${DOCKER_TAG}").push()
+                        try {
+                            docker.image("${DOCKERHUB_REPO}:${DOCKER_TAG}").push()
+                            echo "Docker image ${DOCKERHUB_REPO}:${DOCKER_TAG} pushed successfully."
+                        } catch (Exception e) {
+                            echo "Error occurred while pushing Docker image: ${e.message}"
+                            throw e
+                        }
                     }
                 }
             }
@@ -32,8 +42,10 @@ pipeline {
     }
     post {
         always {
-            // Clean up Docker environment
-            sh 'docker system prune -af'
+            script {
+                echo "Cleaning up Docker environment..."
+                sh 'docker system prune -af || echo "Docker prune failed. Continuing..."'
+            }
         }
     }
 }
